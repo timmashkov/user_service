@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, List, Optional, Union
 
 from aio_pika import Message, RobustConnection, connect_robust
 from aio_pika.abc import AbstractChannel
@@ -19,10 +19,12 @@ class RabbitMQAdapter(AbstractBroker):
         password: str,
         protocol: str = "amqp",
         timeout: int = 10,
+        queue_list: Optional[List[str]] = None,
         logger: Optional[logging.Logger] = None,
     ) -> None:
         self.connection: Optional[RobustConnection] = None
         self.queues: dict = {}
+        self.queue_list: list = queue_list if queue_list else []
         self.channel: Optional[AbstractChannel] = None
 
         self.logger = logger or logging
@@ -56,6 +58,14 @@ class RabbitMQAdapter(AbstractBroker):
         else:
             raise ConnectionError("Error while creating queue")
 
+    async def init_queues(self, **kwargs):
+        if self.connection and self.channel:
+            for routing_key in self.queue_list:
+                await self.channel.declare_queue(name=routing_key, **kwargs)
+            self.logger.info("Queues has been created")
+        else:
+            raise ConnectionError("Error while creating queues")
+
     async def close(self) -> None:
         if self.connection and not self.connection.is_closed:
             await self.connection.close()
@@ -64,7 +74,10 @@ class RabbitMQAdapter(AbstractBroker):
     async def init_consumer(
         self, routing_key: str, on_message: Callable, **kwargs: Any
     ) -> None:
-        await self.queues[routing_key].consume(callback=on_message, **kwargs)
+        try:
+            await self.queues[routing_key].consume(callback=on_message, **kwargs)
+        except Exception as e:
+            self.logger.error(f"Error while consuming: {e}")
 
     async def send(
         self, message: Union[str, bytes, dict, list], routing_key: str, **kwargs: Any

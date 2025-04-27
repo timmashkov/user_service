@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
-from adapters.alchemy_adapter import AlchemyAdapter
+from adapters.database.alchemy_adapter import AlchemyAdapter
 from main.common.interfaces.repository_interfaces import AbstractReadRepository
 from main.database.models import User
 
@@ -29,7 +29,13 @@ class UserReadRepository(AbstractReadRepository):
         async with self._session() as session:
             stmt = self.__get_query().where(self._model.uuid == uuid)
             answer = await session.execute(stmt)
-        return answer.scalar_one_or_none()
+        return answer.unique().scalar_one_or_none()
+
+    async def find_user(self, login: str) -> Optional[User]:
+        async with self._session() as session:
+            stmt = self.__get_query().where(self._model.login == login)
+            answer = await session.execute(stmt)
+        return answer.unique().scalar_one_or_none()
 
     async def find(
         self,

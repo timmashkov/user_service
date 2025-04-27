@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from datetime import datetime
+from uuid import UUID
 
 
 @dataclass(frozen=True)
@@ -15,3 +17,10 @@ class UserCreateDTO:
     is_verified: bool
     is_superuser: bool
     is_active: bool
+
+
+@dataclass(frozen=True)
+class UserResultDTO(UserCreateDTO):
+    uuid: UUID
+    created_at: datetime
+    updated_at: datetime

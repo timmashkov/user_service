@@ -15,9 +15,11 @@ from main.common.interfaces.repository_interfaces import (
 class PermissionService(Singleton):
     def __init__(
         self,
-        read_repository: AbstractReadRepository = Depends(Container.role_read_manager),
+        read_repository: AbstractReadRepository = Depends(
+            Container.permission_read_manager
+        ),
         write_repository: AbstractWriteRepository = Depends(
-            Container.role_write_manager
+            Container.permission_write_manager
         ),
     ) -> None:
         self.read_repository = read_repository

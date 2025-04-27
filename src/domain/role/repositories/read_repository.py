@@ -4,15 +4,15 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
-from adapters.alchemy_adapter import AlchemyAdapter
+from adapters.database.alchemy_adapter import AlchemyAdapter
 from main.common.interfaces.repository_interfaces import AbstractReadRepository
-from main.database.models import Permission
+from main.database.models import Role
 
 
-class PermissionReadRepository(AbstractReadRepository):
+class RoleReadRepository(AbstractReadRepository):
 
     def __init__(self, session_adapter: AlchemyAdapter) -> None:
-        self._model = Permission
+        self._model = Role
         self._session: async_sessionmaker = session_adapter.autocommit_session
 
     @classmethod
@@ -25,7 +25,7 @@ class PermissionReadRepository(AbstractReadRepository):
         query = select(self._model)
         return query
 
-    async def get_item(self, uuid: Union[str, UUID]) -> Optional[Permission]:
+    async def get_item(self, uuid: Union[str, UUID]) -> Optional[Role]:
         async with self._session() as session:
             stmt = self.__get_query().where(self._model.uuid == uuid)
             answer = await session.execute(stmt)
