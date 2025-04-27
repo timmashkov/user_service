@@ -10,7 +10,7 @@ from domain.role.repositories.read_repository import RoleReadRepository
 from domain.role.repositories.write_repository import RoleWriteRepository
 from domain.user.repositories.read_repository import UserReadRepository
 from domain.user.repositories.write_repository import UserWriteRepository
-from main.common.base_entities.singleton import OnlyContainer, Singleton
+from infrastructure.common.base_entities.singleton import OnlyContainer, Singleton
 
 
 class Container(Singleton):

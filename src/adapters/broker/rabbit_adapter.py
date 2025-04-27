@@ -6,7 +6,7 @@ from aio_pika import Message, RobustConnection, connect_robust
 from aio_pika.abc import AbstractChannel
 from yarl import URL
 
-from main.common.interfaces.broker_interface import AbstractBroker
+from infrastructure.common.interfaces.broker_interface import AbstractBroker
 
 
 class RabbitMQAdapter(AbstractBroker):

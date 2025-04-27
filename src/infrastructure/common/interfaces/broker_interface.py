@@ -3,7 +3,7 @@ from typing import Any, Callable, Union
 
 from orjson import dumps, loads
 
-from main.common.exceptions.serialize_exceptions import (
+from infrastructure.common.exceptions.serialize_exceptions import (
     DeserializationError,
     SerializationError,
 )

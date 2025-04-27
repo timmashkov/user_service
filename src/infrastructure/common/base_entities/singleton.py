@@ -1,4 +1,4 @@
-from main.common.base_entities.base_object import BaseObject
+from infrastructure.common.base_entities.base_object import BaseObject
 
 
 class Singleton:

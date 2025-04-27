@@ -5,8 +5,8 @@ from fastapi import Depends
 
 from application.container import Container
 from domain.role.entities.model import RoleIncomingData
-from main.common.base_entities.singleton import Singleton
-from main.common.interfaces.repository_interfaces import (
+from infrastructure.common.base_entities.singleton import Singleton
+from infrastructure.common.interfaces.repository_interfaces import (
     AbstractReadRepository,
     AbstractWriteRepository,
 )

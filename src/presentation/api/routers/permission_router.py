@@ -11,7 +11,7 @@ from domain.permission.entities.model import (
     PermissionIncomingData,
     PermissionResultData,
 )
-from main.common.interfaces.router_interface import AbstractRouter
+from infrastructure.common.interfaces.router_interface import AbstractRouter
 
 
 class PermissionRouter(AbstractRouter):

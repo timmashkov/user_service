@@ -3,7 +3,7 @@ from multiprocessing import Process
 
 from application.config import settings
 from application.container import Container
-from main.common.interfaces.broker_interface import AbstractBroker
+from infrastructure.common.interfaces.broker_interface import AbstractBroker
 
 
 async def _amqp_handler(

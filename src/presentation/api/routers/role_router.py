@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from application.services.role_service import RoleService
 from domain.role.entities.model import RoleFilter, RoleIncomingData, RoleResultData
-from main.common.interfaces.router_interface import AbstractRouter
+from infrastructure.common.interfaces.router_interface import AbstractRouter
 
 
 class RoleRouter(AbstractRouter):

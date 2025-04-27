@@ -1,6 +1,6 @@
 from fastapi import status
 
-from main.common.base_entities.base_exception import BaseAPIException
+from infrastructure.common.base_entities.base_exception import BaseAPIException
 
 
 class AuthenticationError(BaseAPIException):

@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
-from main.database.models.base import Base
+from infrastructure.database.models.base import Base
 
 
 class UserRole(Base):

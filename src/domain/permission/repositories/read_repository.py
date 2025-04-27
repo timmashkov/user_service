@@ -5,8 +5,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from adapters.database.alchemy_adapter import AlchemyAdapter
-from main.common.interfaces.repository_interfaces import AbstractReadRepository
-from main.database.models import Permission
+from infrastructure.common.interfaces.repository_interfaces import (
+    AbstractReadRepository,
+)
+from infrastructure.database.models import Permission
 
 
 class PermissionReadRepository(AbstractReadRepository):

@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from application.services.user_service import UserService
 from domain.user.entities.model import UserFilter, UserIncomingData, UserResultData
-from main.common.interfaces.router_interface import AbstractRouter
+from infrastructure.common.interfaces.router_interface import AbstractRouter
 
 
 class UserRouter(AbstractRouter):

@@ -5,7 +5,7 @@ from typing import AsyncContextManager, Optional
 
 from fastapi import APIRouter, FastAPI
 
-from main.common.base_entities.singleton import Singleton
+from infrastructure.common.base_entities.singleton import Singleton
 
 
 class ApiServer(Singleton):

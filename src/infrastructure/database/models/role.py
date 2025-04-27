@@ -4,11 +4,11 @@ from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from main.database.models import Base
+from infrastructure.database.models import Base
 
 if TYPE_CHECKING:
-    from main.database.models.permission import Permission
-    from main.database.models.user import User
+    from infrastructure.database.models.permission import Permission
+    from infrastructure.database.models.user import User
 
 
 class Role(Base):

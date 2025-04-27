@@ -4,8 +4,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, Field, SecretStr
 
-from main.common.base_entities.patched_filter import PatchedFilter
-from main.database.models import User
+from infrastructure.common.base_entities.patched_filter import PatchedFilter
+from infrastructure.database.models import User
 
 
 class UserIncomingData(BaseModel):
