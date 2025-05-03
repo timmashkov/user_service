@@ -27,5 +27,11 @@ class LoginDTO:
 
 
 @dataclass(frozen=True)
+class LoginResult:
+    access_token: str
+    refresh_token: str
+
+
+@dataclass(frozen=True)
 class LogoutDTO:
     status: bool

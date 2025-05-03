@@ -102,7 +102,7 @@ class TokenProvider:
             return payload["sub"]
         raise InvalidScopeToken
 
-    async def refresh_token(self, refresh_token: str) -> dict[str, str]:
+    async def refresh_tokens(self, refresh_token: str) -> dict[str, str]:
         try:
             payload = jwt.decode(
                 refresh_token,
@@ -113,7 +113,7 @@ class TokenProvider:
                 user_id = payload["sub"]
                 new_token = await self.encode_token(user_id)
                 new_refresh = await self.encode_refresh_token(user_id)
-                return {"new_access_token": new_token, "new_refresh_token": new_refresh}
+                return {"access_token": new_token, "refresh_token": new_refresh}
             raise InvalidScopeToken
         except jwt.ExpiredSignatureError:
             raise RefreshTokenExpired
@@ -131,19 +131,19 @@ class TokenProvider:
         self,
         access_token: str,
         refresh_token: str,
-        user_uuid: str,
+        user_login: str,
     ) -> None:
         _tokens: dict[str:str] = {
             "access_token": access_token,
             "refresh_token": refresh_token,
         }
         saved_data = orjson.dumps(_tokens)
-        await self.redis_client.set(name=user_uuid, value=saved_data, ex=self._exp)
+        await self.redis_client.set(name=user_login, value=saved_data, ex=self._exp)
 
-    async def del_tokes_from_session(self, user_uuid: str) -> None:
-        await self.redis_client.delete(user_uuid)
+    async def del_tokes_from_session(self, user_login: str) -> None:
+        await self.redis_client.delete(user_login)
 
-    async def get_tokens_from_session(self, user_uuid: str) -> Optional[dict[str:str]]:
-        if raw_data := await self.redis_client.get(user_uuid):
+    async def get_tokens_from_session(self, user_login: str) -> Optional[dict[str:str]]:
+        if raw_data := await self.redis_client.get(user_login):
             return orjson.loads(raw_data)
         return None

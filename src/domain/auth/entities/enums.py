@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class TokenTypes(Enum):
@@ -12,3 +12,10 @@ class TokenTypes(Enum):
         elif self == self.REFRESH:
             return self.REFRESH.value
         return ""
+
+
+class AuthOptions(Enum):
+    LOGIN = auto()
+    LOGOUT = auto()
+    CHECK_AUTH = auto()
+    REFRESH_TOKEN = auto()

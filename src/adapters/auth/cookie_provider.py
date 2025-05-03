@@ -1,4 +1,4 @@
-from typing import Literal, Union
+from typing import Literal, Optional, Union
 
 from fastapi import Response
 
@@ -17,9 +17,9 @@ class CookieProvider:
         self.httponly: bool = settings.COOKIE.httponly
         self.secure: bool = settings.COOKIE.secure
 
-    def set_auth_cookie(self, token: str) -> None:
+    def set_auth_cookie(self, token: str, key: Optional[str] = None) -> None:
         self.response.set_cookie(
-            key=self.cookie_key,
+            key=key if key else self.cookie_key,
             value=token,
             httponly=self.httponly,
             max_age=self.expiration,
@@ -29,3 +29,8 @@ class CookieProvider:
 
     def delete_auth_cookie(self) -> None:
         self.response.delete_cookie(key=self.cookie_key)
+
+    def refresh_auth_cookie(self, tokens: dict[str:str]) -> None:
+        self.delete_auth_cookie()
+        for key, value in tokens.items():
+            self.set_auth_cookie(key=key, token=value)

@@ -16,9 +16,9 @@ user_app = ApiServer(
         AuthRouter().api_router,
     ],
     start_callbacks=[
-        # amqp_process.start,
-        # Container.rabbit_manager().connect,
-        # Container.rabbit_manager().init_queues,
+        amqp_process.start,
+        Container.rabbit_manager().connect,
+        Container.rabbit_manager().init_queues,
     ],
     stop_callbacks=[amqp_process.close],
 ).app
