@@ -4,6 +4,7 @@ from adapters.auth.token_adapter import TokenAdapter
 from adapters.broker.rabbit_adapter import RabbitMQAdapter
 from adapters.database.alchemy_adapter import AlchemyAdapter
 from application.config import settings
+from application.processes.consume_process import BrokerProcessManager
 from domain.permission.repositories.read_repository import PermissionReadRepository
 from domain.permission.repositories.write_repository import PermissionWriteRepository
 from domain.role.repositories.read_repository import RoleReadRepository
@@ -48,6 +49,12 @@ class Container(Singleton):
         formats=settings.AUTH.formats,
         algorythm=settings.AUTH.algorythm,
         redis_client=redis(),
+    )
+
+    broker_process_manager = OnlyContainer(
+        BrokerProcessManager,
+        broker=rabbit_manager(),
+        queues=settings.RABBIT_ROUTING_KEYS,
     )
 
     user_read_manager = OnlyContainer(
