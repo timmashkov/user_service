@@ -1,8 +1,8 @@
 import logging
 from typing import Optional, Union
 
-from adapters.auth.cookie_provider import CookieProvider
-from adapters.auth.token_provider import TokenProvider
+from adapters.auth.cookie_adapter import CookieAdapter
+from adapters.auth.token_adapter import TokenAdapter
 from application.services.user_service import UserService
 from domain.auth.entities.dto import LoginDTO, LoginResult, LogoutDTO, TokenDTO
 from domain.auth.entities.enums import AuthOptions
@@ -16,13 +16,13 @@ class Authenticate(BaseInteractor[LoginDTO, LogoutDTO]):
     def __init__(
         self,
         user_provider: UserService,
-        token_provider: TokenProvider,
-        cookie_provider: CookieProvider,
+        token_adapter: TokenAdapter,
+        cookie_adapter: CookieAdapter,
         option: AuthOptions,
     ) -> None:
         self.user_provider = user_provider
-        self.token_provider = token_provider
-        self.cookie_provider = cookie_provider
+        self.token_adapter = token_adapter
+        self.cookie_adapter = cookie_adapter
         self.option = option
 
     async def __call__(
@@ -52,34 +52,32 @@ class Authenticate(BaseInteractor[LoginDTO, LogoutDTO]):
             encoded_pass=user.password,
         )
 
-        if not await self.token_provider.verify_password(token_data):
+        if not await self.token_adapter.verify_password(token_data):
             raise AuthenticationError
 
         access_token, refresh_token = await safe_gather(
             *[
-                self.token_provider.encode_token(user_id=user.login),
-                self.token_provider.encode_refresh_token(user_id=user.login),
+                self.token_adapter.encode_token(user_id=user.login),
+                self.token_adapter.encode_refresh_token(user_id=user.login),
             ]
         )
-        self.cookie_provider.set_auth_cookie(access_token, key="access_token")
-        self.cookie_provider.set_auth_cookie(refresh_token, key="refresh_token")
-        await self.token_provider.save_tokens_to_session(
+        self.cookie_adapter.set_auth_cookie(access_token, key="access_token")
+        self.cookie_adapter.set_auth_cookie(refresh_token, key="refresh_token")
+        await self.token_adapter.save_tokens_to_session(
             access_token, refresh_token, user.login
         )
         return LoginResult(access_token=access_token, refresh_token=refresh_token)
 
     async def _logout(self, refresh_token: str) -> LogoutDTO:
-        user_login = await self.token_provider.decode_refresh_token(token=refresh_token)
-        tokens = await self.token_provider.get_tokens_from_session(
-            user_login=user_login
-        )
+        user_login = await self.token_adapter.decode_refresh_token(token=refresh_token)
+        tokens = await self.token_adapter.get_tokens_from_session(user_login=user_login)
 
         if not tokens:
             raise Unauthorized
 
         try:
-            await self.token_provider.del_tokes_from_session(user_login)
-            self.cookie_provider.delete_auth_cookie()
+            await self.token_adapter.del_tokes_from_session(user_login)
+            self.cookie_adapter.delete_auth_cookie()
 
             return LogoutDTO(status=True)
 
@@ -88,27 +86,23 @@ class Authenticate(BaseInteractor[LoginDTO, LogoutDTO]):
             return LogoutDTO(status=False)
 
     async def _check_auth(self, refresh_token: str) -> LoginResult:
-        user_login = await self.token_provider.decode_refresh_token(token=refresh_token)
+        user_login = await self.token_adapter.decode_refresh_token(token=refresh_token)
 
-        if tokens := await self.token_provider.get_tokens_from_session(
+        if tokens := await self.token_adapter.get_tokens_from_session(
             user_login=user_login
         ):
             return LoginResult(**tokens)
         raise Unauthorized
 
     async def _refresh_tokens(self, refresh_token: str) -> LoginResult:
-        user_login = await self.token_provider.decode_refresh_token(token=refresh_token)
-        tokens = await self.token_provider.get_tokens_from_session(
-            user_login=user_login
-        )
+        user_login = await self.token_adapter.decode_refresh_token(token=refresh_token)
+        tokens = await self.token_adapter.get_tokens_from_session(user_login=user_login)
+
         if tokens:
-            new_tokens = await self.token_provider.refresh_tokens(
+            new_tokens = await self.token_adapter.refresh_tokens(
                 tokens.get("refresh_token")
             )
-            await self.token_provider.del_tokes_from_session(user_login)
-            await self.token_provider.save_tokens_to_session(
-                **new_tokens, user_login=user_login
-            )
-            self.cookie_provider.refresh_auth_cookie(new_tokens)
+            await self.token_adapter.refresh_tokens_in_session(user_login, tokens)
+            self.cookie_adapter.refresh_auth_cookie(new_tokens)
             return LoginResult(**new_tokens)
         raise Unauthorized

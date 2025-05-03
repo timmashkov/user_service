@@ -5,8 +5,7 @@ from uuid import UUID
 
 import jwt
 import orjson
-from fastapi import Security
-from fastapi.security import APIKeyHeader, HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security import APIKeyHeader, HTTPBearer
 from redis.asyncio import Redis
 
 from domain.auth.entities.dto import PayloadDTO, TokenDTO
@@ -17,11 +16,10 @@ from domain.auth.exceptions.token_exceptions import (
     InvalidToken,
     RefreshTokenExpired,
     TokenExpired,
-    Unauthorized,
 )
 
 
-class TokenProvider:
+class TokenAdapter:
     def __init__(
         self,
         secret: str,
@@ -120,13 +118,6 @@ class TokenProvider:
         except jwt.InvalidTokenError:
             raise InvalidRefreshToken
 
-    async def check_jwt(self) -> str:
-        credentials: HTTPAuthorizationCredentials = Security(self._jwt_header)
-        token = credentials.credentials
-        if not self.decode_token(token):
-            raise Unauthorized
-        return token
-
     async def save_tokens_to_session(
         self,
         access_token: str,
@@ -139,6 +130,12 @@ class TokenProvider:
         }
         saved_data = orjson.dumps(_tokens)
         await self.redis_client.set(name=user_login, value=saved_data, ex=self._exp)
+
+    async def refresh_tokens_in_session(
+        self, user_login: str, tokens: dict[str, str]
+    ) -> None:
+        await self.del_tokes_from_session(user_login)
+        await self.save_tokens_to_session(**tokens, user_login=user_login)
 
     async def del_tokes_from_session(self, user_login: str) -> None:
         await self.redis_client.delete(user_login)

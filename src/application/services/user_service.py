@@ -3,7 +3,7 @@ from uuid import UUID
 
 from fastapi import Depends
 
-from adapters.auth.token_provider import TokenProvider
+from adapters.auth.token_adapter import TokenAdapter
 from application.container import Container
 from domain.auth.entities.dto import TokenDTO
 from domain.user.entities.model import UserIncomingData
@@ -21,7 +21,7 @@ class UserService(Singleton):
         write_repository: AbstractWriteRepository = Depends(
             Container.user_write_manager
         ),
-        token_repository: TokenProvider = Depends(Container.token_manager),
+        token_repository: TokenAdapter = Depends(Container.token_manager),
     ) -> None:
         self.read_repository = read_repository
         self.write_repository = write_repository

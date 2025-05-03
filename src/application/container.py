@@ -1,6 +1,6 @@
 from redis.asyncio import Redis
 
-from adapters.auth.token_provider import TokenProvider
+from adapters.auth.token_adapter import TokenAdapter
 from adapters.broker.rabbit_adapter import RabbitMQAdapter
 from adapters.database.alchemy_adapter import AlchemyAdapter
 from application.config import settings
@@ -39,7 +39,7 @@ class Container(Singleton):
     )
 
     token_manager = OnlyContainer(
-        TokenProvider,
+        TokenAdapter,
         secret=settings.AUTH.secret,
         exp=settings.AUTH.expiration,
         api_x_key_header=settings.AUTH.api_x_key_header,

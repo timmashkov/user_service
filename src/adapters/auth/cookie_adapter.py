@@ -5,7 +5,7 @@ from fastapi import Response
 from application.config import settings
 
 
-class CookieProvider:
+class CookieAdapter:
     def __init__(
         self,
         response: Response,
