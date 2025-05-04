@@ -30,9 +30,7 @@ class RoleService(Singleton):
         return await self.read_repository.find(filters=filters)
 
     async def create_item(self, data: RoleIncomingData):
-        answer = data.model_dump()
-        answer["password"] = answer["password"].get_secret_value()
-        return await self.write_repository.create_item(**answer)
+        return await self.write_repository.create_item(**data.model_dump())
 
     async def update_item(self, uuid: Union[str, UUID], data: RoleIncomingData):
         intel = data.model_dump()
