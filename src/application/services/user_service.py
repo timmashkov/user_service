@@ -7,9 +7,9 @@ from adapters.auth.token_adapter import TokenAdapter
 from application.container import Container
 from domain.auth.entities.dto import TokenDTO
 from domain.user.entities.model import UserIncomingData
+from domain.user.interfaces.read_repository_interface import UserReadRepositoryInterface
 from infrastructure.common.base_entities.singleton import Singleton
 from infrastructure.common.interfaces.repository_interfaces import (
-    AbstractReadRepository,
     AbstractWriteRepository,
 )
 
@@ -17,7 +17,9 @@ from infrastructure.common.interfaces.repository_interfaces import (
 class UserService(Singleton):
     def __init__(
         self,
-        read_repository: AbstractReadRepository = Depends(Container.user_read_manager),
+        read_repository: UserReadRepositoryInterface = Depends(
+            Container.user_read_manager
+        ),
         write_repository: AbstractWriteRepository = Depends(
             Container.user_write_manager
         ),
