@@ -1,9 +1,10 @@
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, Field, SecretStr
 
+from domain.role.entities.model import RoleResultData
 from infrastructure.common.base_entities.patched_filter import PatchedFilter
 from infrastructure.database.models import User
 
@@ -27,6 +28,7 @@ class UserResultData(UserIncomingData):
     uuid: UUID = Field(description=User.uuid.comment)
     created_at: datetime = Field(description=User.created_at.comment)
     updated_at: datetime = Field(description=User.updated_at.comment)
+    roles: Optional[List["RoleResultData"]] = Field(default_factory=list)
 
 
 class UserFilter(PatchedFilter):

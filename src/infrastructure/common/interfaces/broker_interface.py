@@ -52,3 +52,7 @@ class AbstractBroker(ABC):
     @abstractmethod
     async def get_message(self, routing_key: str) -> Any:
         pass
+
+    @abstractmethod
+    async def close(self) -> None:
+        pass

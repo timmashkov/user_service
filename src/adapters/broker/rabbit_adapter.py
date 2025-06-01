@@ -24,7 +24,7 @@ class RabbitMQAdapter(AbstractBroker):
     ) -> None:
         self.connection: Optional[RobustConnection] = None
         self.queues: dict = {}
-        self.queue_list: list = queue_list if queue_list else []
+        self.queue_list = queue_list if queue_list else {}
         self.channel: Optional[AbstractChannel] = None
 
         self.logger = logger or logging
@@ -60,8 +60,10 @@ class RabbitMQAdapter(AbstractBroker):
 
     async def init_queues(self, **kwargs):
         if self.connection and self.channel:
-            for routing_key in self.queue_list:
-                await self.channel.declare_queue(name=routing_key, **kwargs)
+            for key, routing_key in self.queue_list.items():
+                self.queues[routing_key] = await self.channel.declare_queue(
+                    name=routing_key, **kwargs
+                )
             self.logger.info("Queues has been created")
         else:
             raise ConnectionError("Error while creating queues")

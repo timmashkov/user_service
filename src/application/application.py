@@ -15,9 +15,9 @@ user_app = ApiServer(
         AuthRouter().api_router,
     ],
     start_callbacks=[
-        Container.broker_process_manager().start_broker_process,
+        Container.broker_process_manager().start_consuming,
         Container.rabbit_manager().connect,
         Container.rabbit_manager().init_queues,
     ],
-    stop_callbacks=[Container.broker_process_manager().stop_broker_process],
+    stop_callbacks=[Container.broker_process_manager().stop_consuming],
 ).app

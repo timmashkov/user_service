@@ -51,15 +51,16 @@ class Container(Singleton):
         redis_client=redis(),
     )
 
-    broker_process_manager = OnlyContainer(
-        BrokerProcessManager,
-        broker=rabbit_manager(),
-        queues=settings.RABBIT_ROUTING_KEYS,
-    )
-
     user_read_manager = OnlyContainer(
         UserReadRepository,
         session_adapter=alchemy_manager(),
+    )
+
+    broker_process_manager = OnlyContainer(
+        BrokerProcessManager,
+        broker=rabbit_manager(),
+        user_read_repository=user_read_manager(),
+        queues=settings.RABBIT_ROUTING_KEYS,
     )
 
     user_write_manager = OnlyContainer(

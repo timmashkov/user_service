@@ -11,7 +11,7 @@ from application.services.user_service import UserService
 from domain.auth.entities.enums import AuthOptions
 
 
-class AuthInteractorFactory:
+class InteractorFactory:
     def __init__(
         self,
         token_adapter: TokenAdapter = Depends(Container.token_manager),

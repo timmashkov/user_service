@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Optional, Union
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -18,11 +18,11 @@ class UserRouter(AbstractRouter):
     output_model: BaseModel = UserResultData
 
     @staticmethod
-    @api_router.get("/{uuid}", response_model=output_model)
+    @api_router.get("/{uuid}", response_model=Optional[output_model])
     async def get_object(
         uuid: Union[str, UUID],
         order_provider: UserService = service_client,
-    ) -> output_model:
+    ) -> Optional[output_model]:
         return await order_provider.get_item(uuid=uuid)
 
     @staticmethod
